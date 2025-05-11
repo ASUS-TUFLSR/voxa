@@ -2,7 +2,7 @@
 
 - Initialized Project Voxa
 - Creating Routes
-- Implementing Auth with NextAuth
+- Implementing Auth with NextAuth check route: /api/auth/sigin 
 
 # Tech Stack
 
