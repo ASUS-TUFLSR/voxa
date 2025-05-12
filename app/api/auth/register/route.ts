@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/helpers";
 import prisma from "@/prisma";
 import { NextResponse } from "next/server";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 
 export const POST = async (req: Request) => {
@@ -12,20 +12,20 @@ export const POST = async (req: Request) => {
     try {
         await connectDB();
         const hashedPassword = await bcrypt.hash(password, 10)
-        const user = await prisma.user.create({data: {email, name, password : hashedPassword}})
+        const user = await prisma.User.create({data: {email, name, password : hashedPassword}})
         return NextResponse.json({
             message: "User successfully created",
             ...user,
         },{
             status: 201
         })
+        /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (err: any) {
         return NextResponse.json({
             message: "Server Error",
             ...err,
-        },{
-            status: 201
-        })
+        },{status: 500});
+        
     } finally {
         await prisma.$disconnect();
     }
