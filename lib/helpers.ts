@@ -5,6 +5,5 @@ export const connectDB = async () => {
         await prisma.$connect();    
      } catch (err: any) {
         throw new Error(err);
-     }
-    
+     } 
 }
