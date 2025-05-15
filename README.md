@@ -3,6 +3,8 @@
 - Initialized Project Voxa
 - Creating Routes
 - Implementing Auth with NextAuth check route: /api/auth/sigin 
+- Implementing Auth with NextAuth check route: /api/auth/register
+- Sign Up & Login functionality working fine, had to make some tweaks
 
 # Tech Stack
 
