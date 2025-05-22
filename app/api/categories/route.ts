@@ -13,6 +13,7 @@ export const GET = async () => {
     }
 };
 
+
 export const POST = async (req: Request) => {
     try {
         const { name } = await req.json();
@@ -25,3 +26,4 @@ export const POST = async (req: Request) => {
         await prisma.$disconnect();
     }
 };
+
