@@ -5,6 +5,15 @@
 - Implementing Auth with NextAuth check route: /api/auth/sigin 
 - Implementing Auth with NextAuth check route: /api/auth/register
 - Sign Up & Login functionality working fine, had to make some tweaks
+- Implementing Cloudinary for posting blog
+- 1 Go to Cloudinary SIGNUP and Create a environment variable
+- 2 On the product environment page copy the followings : - 
+  - CLOUDINARY_CLOUD_NAME
+  - CLOUDINARY_API_KEY
+  - CLOUDINARY_API_SECRET
+  - CLOUDINARY_URL
+- 3 Create a .env file store all the keys and secret there also add .env in .gitignore
+-  
 
 # Tech Stack
 
