@@ -3,19 +3,25 @@ import prisma from "@/prisma";
 import { v2, UploadApiResponse } from "cloudinary"
 
 async function uploadImage(file: Blob) {
-    return new Promise<Upload>
-    const buffer = Buffer.from(await file.arrayBuffer())
-    v2.uploader.upload_stream(
+    return new Promise<UploadApiResponse>(async (resolve, reject) => {
+        
+        const buffer = Buffer.from(await file.arrayBuffer())
+        
+        v2.uploader.upload_stream(
         {
             resource_type:"auto", 
             folder:"nextjs-full-stack-blog"
         },(err, result) => {
-            if (err) {
+            if (err) {  
                 console.log(err);
-
+               return reject(err);
+            }else if(result){
+               return resolve(result)
             }
         }
-)
+        ).end(buffer)
+    })
+    
 }
 
 export const GET = async () => {
@@ -45,7 +51,12 @@ export const POST = async (req: Request) => {
         }
 
         const file = formData.get("image") as Blob | null;
-
+        let uploadedFile: UploadApiResponse | null = null;
+        if(file) {
+            uploadedFile = await uploadImage(file)
+        }else{
+            uploadedFile = null;
+        }
         await connectDB();
         const user = await prisma.user.findFirst({ where: {id: userId }})
         const category = await prisma.category.findFirst({where: {id: categoryId}});
