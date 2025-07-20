@@ -31,3 +31,18 @@ export const PUT = async ( req: Request ,{ params }: { params: { id: string }}) 
         await prisma.$disconnect();
     }  
 };
+
+
+// Deleting the blog ny ID
+export const DELETE = async ( req: Request ,{ params }: { params: { id: string }}) => {
+    try {
+        const id = params.id;
+        await connectDB();
+        const blog = await prisma.blog.delete({where: {id}});
+        return generateSuccessMessage({blog}, 200);
+    } catch (error) {
+        generateErrorMessage({error}, 500);
+    } finally {
+        await prisma.$disconnect();
+    }  
+};

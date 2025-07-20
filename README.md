@@ -13,7 +13,8 @@
   - CLOUDINARY_API_SECRET
   - CLOUDINARY_URL
 - 3 Create a .env file store all the keys and secret there also add .env in .gitignore
--  
+- Successfully uploading images in cloudinary & fetching from the backend mongoDB DB
+- Created successfull blog CRUD operations
 
 # Tech Stack
 
