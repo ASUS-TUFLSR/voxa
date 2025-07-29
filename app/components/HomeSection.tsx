@@ -99,8 +99,8 @@ const HomeSection = async () => {
             <h2 className='text-2xl font-semibold' >Recent Articles</h2>
           </div>
           <div className='flex w-full flex-wrap justify-center' >
-               
-          </div>
+                   {JSON.stringify(blogs)}
+         </div>
       </div>
     </section>
   );
