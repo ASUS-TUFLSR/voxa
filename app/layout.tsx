@@ -1,5 +1,4 @@
-import "./globals.css";
-import "@/app/globals.css"; // ✅ Adjust path if needed
+import './globals.css'
 import Provider from "./components/Provider";
 import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";

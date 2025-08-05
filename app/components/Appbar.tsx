@@ -1,7 +1,7 @@
 "use client"
+import { Link } from "lucide-react";
 import Logo from "./Logo";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 
 
 
