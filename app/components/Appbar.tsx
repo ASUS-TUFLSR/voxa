@@ -1,5 +1,4 @@
 "use client"
-import { url } from "inspector";
 import Logo from "./Logo";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
