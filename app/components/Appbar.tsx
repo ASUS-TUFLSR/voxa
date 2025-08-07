@@ -1,5 +1,5 @@
 "use client"
-import { Link } from "lucide-react";
+import Link from "next/link";
 import Logo from "./Logo";
 import { useSession } from "next-auth/react";
 
@@ -38,4 +38,4 @@ const Appbar = () => {
     );
 }
 
-export default Appbar
+export default Appbar;

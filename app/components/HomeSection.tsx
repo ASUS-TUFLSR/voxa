@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import BlogItem from './BlogItem';
 // import { getAllBlogs } from '@/lib/helpers';
 
 const HomeSection = async () => {
@@ -99,7 +100,7 @@ const HomeSection = async () => {
             <h2 className='text-2xl font-semibold' >Recent Articles</h2>
           </div>
           <div className='flex w-full flex-wrap justify-center' >
-                   {JSON.stringify(blogs)}
+                   {blogs.map((blog) => <BlogItem key={blog.id} {...blog}/>)}
          </div>
       </div>
     </section>
