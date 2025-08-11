@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 import React from 'react'
 
 type Props = {
@@ -14,7 +15,7 @@ type Props = {
 
 const BlogItem = (props : Props ) => {
   return (
-    <div>{props.title}</div>
+    <Card>{props.title}</Card>
   )
 }
 
