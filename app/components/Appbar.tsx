@@ -23,14 +23,14 @@ const Appbar = () => {
     const { status } = useSession();
 
     return (
-        <section className="sticky w-full bg-gray-100 " >
+        <section className="sticky w-full bg-red-800 " >
             <nav className="flex items-center justify-between px-8 py-4 bg-transparent" >
                 <div>
                     <Logo/>
                 </div>
                 <div className="flex items-center gap-4 p-2" >
                         { (status === "authenticated" ? authLinks:nonAuthLinks).map((item) => 
-                        <Link href={item.url} key={item.id} className="text-gray-900 text-lg font-semibold hover:text-violet-800 duration-300" >{item.name}</Link>
+                        <Link href={item.url} key={item.id} className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300" >{item.name}</Link>
                         ) }
                 </div>
             </nav>

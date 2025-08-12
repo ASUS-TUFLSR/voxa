@@ -67,7 +67,10 @@ const HomeSection = async () => {
   // console.log(blogs)
 
   return (
-    <section className="w-full py-10 px-6">
+    <section className="w-full py-10 px-6" style={{ 
+        backgroundImage: `url('https://static.wixstatic.com/media/d19037_5a46916c0c674a99bd20b2f72fd10e8e~mv2.jpg/v1/fill/w_1024,h_813,al_c,q_85,enc_avif,quality_auto/d19037_5a46916c0c674a99bd20b2f72fd10e8e~mv2.jpg')`, // Assuming image is in public/images
+        backgroundSize: 'cover' 
+      }}>
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
         
         {/* Text Section */}
@@ -84,6 +87,7 @@ const HomeSection = async () => {
         <div className="w-full md:w-1/2 flex justify-center px-2">
           <div className="w-3/4 sm:w-2/3 md:w-full max-w-xs sm:max-w-sm md:max-w-full">
             <Image
+            priority
               className="w-full h-auto rounded-2xl shadow-xl"
               alt="Learning"
               width={600}
