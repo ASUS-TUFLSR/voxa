@@ -23,7 +23,7 @@ const Appbar = () => {
     const { status } = useSession();
 
     return (
-        <section className="sticky w-full bg-red-800 " >
+        <section className="sticky w-full bg-red-900 " >
             <nav className="flex items-center justify-between px-8 py-4 bg-transparent" >
                 <div>
                     <Logo/>
