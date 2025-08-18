@@ -8,7 +8,7 @@ const HomeSection = async () => {
     {
       id: "6879220d391a65c6d6ee75d8",
       title: "React Hooks and NextJS",
-      description: "<p>React is a JavaScript library, and React even has a framework named NextJS.</p>",
+      description: "<p>React is a JavaScript library, and React even has a framework named NextJS.React is a JavaScript library, and React even has a framework named NextJS</p>",
       imageUrl: "https://res.cloudinary.com/dkevrnrw6/image/upload/v1752769034/nextjs-full-stack-blog/tmmx2mrcvws3lik3kcgf.jpg",
       userId: "6824347ea606e9a2eebdb2a1",
       createdAt: "2025-07-17T16:17:17.556Z",
@@ -59,9 +59,20 @@ const HomeSection = async () => {
       updatedAt: "2025-07-18T16:36:04.531Z",
       categoryId: "682ad898260c87a04ec81ca9",
       location: "Berlin"
+    },
+    {
+      id: "6879220d391a65c6d6ee75d9",
+      title: "React Hooks and NextJS",
+      description: "<p>React is a JavaScript library, and React even has a framework named NextJS.</p>",
+      imageUrl: "https://res.cloudinary.com/dkevrnrw6/image/upload/v1752769034/nextjs-full-stack-blog/tmmx2mrcvws3lik3kcgf.jpg",
+      userId: "6824347ea606e9a2eebdb2a1",
+      createdAt: "2025-07-17T16:17:17.556Z",
+      updatedAt: "2025-07-18T16:36:04.531Z",
+      categoryId: "682ad898260c87a04ec81ca9",
+      location: "Berlin"
     }
   ];
-
+ 
   // Helper to truncate descriptions
   const truncateText = (html: string, limit: number) => {
     const textOnly = html.replace(/<[^>]*>/g, ""); // strip HTML tags
@@ -79,10 +90,10 @@ const HomeSection = async () => {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
         {/* Text Section */}
         <div className="w-full md:w-1/2 flex flex-col gap-4 text-center md:text-left px-2">
-          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-snug text-amber-200">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-6xl font-bold leading-snug text-red-900">
             Lets Learn and Grow Together
           </h1>
-          <p className="text-base sm:text-lg md:text-xl font-medium text-amber-100">
+          <p className="font-serif text-base sm:text-lg md:text-xl font-medium text-red-900">
             Learn not only theoretically but by practically experiencing it.
           </p>
         </div>
@@ -106,9 +117,9 @@ const HomeSection = async () => {
     
       <div className="flex flex-col justify-center items-center ">
         <div className="p-4">
-          <h2 className="text-2xl font-semibold text-cyan-900">Recent Articles</h2>
+          <h2 className="text-2xl font-semibold text-red-900">Recent Articles</h2>
         </div>
-        <div className="flex flex-wrap w-full justify-center">
+        <div className="flex flex-wrap w-full justify-center ">
           {blogs.map((blog) => (
             <BlogItem
               key={blog.id}
@@ -118,7 +129,14 @@ const HomeSection = async () => {
           ))}
 
          </div>
+
+         <div className='w-full p-4 lg:text-center' >
+            <button className="mx-auto border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
+        Explore More Articles
+      </button>
+         </div>
       </div>
+     <hr className="p-3 my-4" />
     </section>
   );
 };
