@@ -1,7 +1,16 @@
 import React from 'react';
-import { categories } from '@/lib/utils';
+import { categories, blogs } from '@/lib/utils';
+import BlogItem from '../components/BlogItem';
 
 const Blogspage = () => {
+
+
+  const truncateText = (html: string, limit: number) => {
+    const textOnly = html.replace(/<[^>]*>/g, ""); // strip HTML tags
+    return textOnly.length > limit ? textOnly.substring(0, limit) + "..." : textOnly;
+  };
+
+
 
   return (
     <section
@@ -58,6 +67,31 @@ const Blogspage = () => {
 
   </div>
 </nav>
+   
+{/* Page: Recent Articles (stacked & centered, wider cards) */}
+<div className="flex flex-col justify-center items-center">
+  <div className="p-4">
+    <h2 className="text-2xl font-semibold text-red-900">Recent Articles</h2>
+  </div>
+
+  {/* container centers items and controls max width for wide rectangles */}
+  <div className="flex flex-col items-center space-y-6 w-full px-4">
+    {blogs.map((blog) => (
+      <div key={blog.id} className="w-full max-w-6xl"> {/* increase max-w-6xl if you want even wider */}
+        {/* ensure the BlogItem itself stretches to 100% of this wrapper */}
+        <BlogItem
+          {...blog}
+          description={truncateText(blog.description, 100)}
+          className="w-full"
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
+
+
+
 
 
     </section>
