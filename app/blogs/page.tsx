@@ -10,9 +10,10 @@ const Blogspage = () => {
 
   return (
     <section
-      className="w-full min-h-screen bg-cover bg-center bg-no-repeat flex flex-col items-start p-4 md:p-8"
+      className="w-full py-10 px-6"
       style={{
         backgroundImage: `url('https://static.wixstatic.com/media/d19037_e1e20ec138914f03bd81393f1c31ec54~mv2.jpg')`,
+        backgroundSize: 'cover'
       }}
     >
       {/* TEXT SECTION: Top-left */}
