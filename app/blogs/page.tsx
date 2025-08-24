@@ -27,7 +27,7 @@ const Blogspage = () => {
       </div>
 
       {/* NAV / FILTER: naturally below text */}
-      <nav className="bg-red-100 border w-full flex flex-col gap-4 p-4 rounded mt-6">
+      <nav className="bg-red-100 border w-full flex flex-col  sm:sticky z-50 top-0 gap-4 p-4 rounded mt-6">
         <div className="flex flex-col md:flex-row items-start md:items-center w-full md:justify-between gap-4">
           
           {/* Filter Label + Select */}
@@ -67,7 +67,7 @@ const Blogspage = () => {
         <div className="p-4">
           <h2 className="text-2xl font-semibold text-red-900">Recent Articles</h2>
         </div>
-        <div className="flex flex-wrap w-full justify-center ">
+        <div className="flex flex-wrap w-full justify-center my-1">
           {blogs.map((blog) => (
             <BlogItem
               key={blog.id}
@@ -79,8 +79,8 @@ const Blogspage = () => {
          </div>
 
          <div className='w-full p-4 lg:text-center' >
-            <button className="mx-auto border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
-        Explore More Articles
+            <button className="mx-auto sm:w-lg w-lg  border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
+        Write Blogs
       </button>
          </div>
       </div>
