@@ -1,19 +1,56 @@
 "use client";
-import { useSession } from 'next-auth/react';
-import Image from 'next/image';
-import React, { ChangeEvent, useState } from 'react'
+
+import { categories } from "@/lib/utils";
+import { Editor } from "react-draft-wysiwyg";
+import { convertToRaw, EditorState } from "draft-js";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import draftToHtml from "draftjs-to-html";
 
 const WriteBlog = () => {
   const { data: session } = useSession();
+
   const [imageUrl, setImageUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [location, setLocation] = useState("");
+  const [category, setCategory] = useState("");
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // @ts-expect-error file input
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
-      setImageUrl(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setImageUrl(url);
     }
   };
+
+  // cleanup to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+    };
+  }, [imageUrl]);
+
+  const convertEditorDataToHTML = () => {
+    return draftToHtml(convertToRaw(editorState.getCurrentContent()))
+  }
+
+  const handlePublish = () => {
+    const blogData = {
+      author: session?.user?.name || "Anonymous",
+      title,
+      location,
+      category,
+      content: convertEditorDataToHTML(), // save raw or convert to HTML later
+      imageUrl,
+    };
+    console.log("Publishing Blog:", blogData);
+    // 🔥 TODO: send `blogData` to backend API
+  };
+
+
 
   return (
     <section className="w-full py-10 px-6 bg-orange-200">
@@ -28,11 +65,14 @@ const WriteBlog = () => {
         <div className="w-1/4">
           <span className="font-extrabold mx-3 text-white">Author:</span>
           <span className="font-semibold uppercase text-white">
-            {session?.user?.name}
+            {session?.user?.name || "Guest"}
           </span>
         </div>
-        <button className="bg-red-700 text-orange-200 px-6 focus:ring-red-900 py-3 rounded-xl 
-            font-semibold shadow-xl hover:bg-red-800">
+        <button
+          onClick={handlePublish}
+          className="bg-red-700 text-orange-200 px-6 focus:ring-red-900 py-3 rounded-xl 
+            font-semibold shadow-xl hover:bg-red-800"
+        >
           Publish
         </button>
       </div>
@@ -51,24 +91,66 @@ const WriteBlog = () => {
         </div>
       )}
 
-      {/* Title */}
-      <h1
-        contentEditable
-        suppressContentEditableWarning
-        className="outline-none border-none font-serif mx-auto p-4 text-2xl 
+      {/* Title Input */}
+      <div className="w-full flex my-5">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter Title!"
+          className="outline-none border-none font-serif mx-auto p-4 text-2xl 
        text-center font-bold text-red-900 w-full h-28"
-      >
-        Enter Title!
-      </h1>
+        />
+      </div>
 
       {/* File Input */}
-      <div className="w-full flex">
+      <div className="w-full flex my-5">
         <input
           onChange={handleImageChange}
           type="file"
           className="md:w-[500px] sm:w-[300px] m-auto text-red-900 bg-orange-100 p-4 rounded-xl font-semibold"
         />
       </div>
+
+      {/* Location */}
+      <div className="w-full flex my-5">
+        <input
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          type="text"
+          placeholder="Location Ex: Germany"
+          className="md:w-[500px] sm:w-[300px] m-auto text-red-900 bg-orange-100 p-4 rounded-xl font-semibold"
+        />
+      </div>
+
+      {/* Category Select */}
+      <div className="w-full flex my-5">
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="md:w-[500px] sm:w-[300px] m-auto text-red-900 bg-orange-100 p-4 rounded-xl font-semibold"
+        >
+          <option value="">-- Select Category --</option>
+          {categories.map((item) => (
+            <option value={item.name} key={item.id}>
+              {item.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Editor */}
+      <Editor
+        editorState={editorState}
+        onEditorStateChange={setEditorState}
+        editorStyle={{
+          width: "100%",
+          minHeight: "50vh",
+          border: "1px solid #ddd",
+          padding: "10px",
+          borderRadius: "10px",
+          background: "#fff",
+        }}
+      />
     </section>
   );
 };
