@@ -1,7 +1,6 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import { categories } from "@/lib/utils";
-import { Editor } from "react-draft-wysiwyg";
 import { convertToRaw, EditorState } from "draft-js";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -9,14 +8,23 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
 
+const Editor = dynamic(() => import("react-draft-wysiwyg").then(mod => mod.Editor), {
+  ssr: false,
+});
+
 const WriteBlog = () => {
   const { data: session } = useSession();
 
+  const [mounted, setMounted] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+
+  
+  
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -26,13 +34,21 @@ const WriteBlog = () => {
     }
   };
 
-  // cleanup to prevent memory leaks
-  useEffect(() => {
+   
+
+   useEffect(() => {
     return () => {
       if (imageUrl) URL.revokeObjectURL(imageUrl);
     };
-  }, [imageUrl]);
+    }, [imageUrl]);
 
+useEffect(() => setMounted(true), []);
+if (!mounted) return null;
+
+  const safeSetEditorState = (state: EditorState) => {
+  if (mounted) setEditorState(state);
+};
+ 
   const convertEditorDataToHTML = () => {
     return draftToHtml(convertToRaw(editorState.getCurrentContent()))
   }
@@ -65,7 +81,7 @@ const WriteBlog = () => {
         <div className="w-1/4">
           <span className="font-extrabold mx-3 text-white">Author:</span>
           <span className="font-semibold uppercase text-white">
-            {session?.user?.name || "Guest"}
+            {session?.user?.name ?? "Guest"}
           </span>
         </div>
         <button
@@ -141,7 +157,7 @@ const WriteBlog = () => {
       {/* Editor */}
       <Editor
         editorState={editorState}
-        onEditorStateChange={setEditorState}
+        onEditorStateChange={safeSetEditorState}
         editorStyle={{
           width: "100%",
           minHeight: "50vh",
