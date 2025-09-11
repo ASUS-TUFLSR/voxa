@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import dynamic from "next/dynamic";
+import { Toaster, toast } from 'react-hot-toast';
 import { categories } from "@/lib/utils";
 import { convertToRaw, EditorState } from "draft-js";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
 
@@ -17,33 +20,31 @@ const WriteBlog = () => {
 
   const [mounted, setMounted] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
 
-  
-  
-
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const url = URL.createObjectURL(file);
       setImageUrl(url);
     }
   };
 
    
-
    useEffect(() => {
     return () => {
       if (imageUrl) URL.revokeObjectURL(imageUrl);
     };
     }, [imageUrl]);
 
-useEffect(() => setMounted(true), []);
-if (!mounted) return null;
+   useEffect(() => setMounted(true), []);
+   if (!mounted) return null;
 
   const safeSetEditorState = (state: EditorState) => {
   if (mounted) setEditorState(state);
@@ -53,23 +54,44 @@ if (!mounted) return null;
     return draftToHtml(convertToRaw(editorState.getCurrentContent()))
   }
 
-  const handlePublish = () => {
-    const blogData = {
-      author: session?.user?.name || "Anonymous",
-      title,
-      location,
-      category,
-      content: convertEditorDataToHTML(), // save raw or convert to HTML later
-      imageUrl,
-    };
-    console.log("Publishing Blog:", blogData);
-    // 🔥 TODO: send `blogData` to backend API
-  };
+  const handlePublish = async (data: any) => {
+    
+    const formData = new FormData();
+    const postData = JSON.stringify(
+      { 
+        author: session?.user?.name || "Anonymous",
+        title, 
+        description:convertEditorDataToHTML(),
+        location,
+        userId: session?.user?.id,
+        categoryId: category,
 
+      });
+
+      formData.append("postData", postData);
+      if (imageFile) {
+       formData.append("image", imageFile);
+      }
+
+      try {
+        toast.loading("Sending your post to world 🌍", { id: "postData" });
+        
+        await fetch("http://localhost:3000/api/blogs", {method: "POST", body: formData, cache:'no-store'})
+
+
+        toast.success("Sent your post to world 🌍", { id: "postData" })
+      } catch (error) {
+        toast.error("Failed to send", { id: "postData" });
+        console.log(error)
+      }
+
+
+  };
 
 
   return (
     <section className="w-full py-10 px-6 bg-orange-200">
+      <Toaster position="top-right" />
       {/* Header */}
       <div
         className="flex justify-between p-4 items-center"
@@ -147,7 +169,7 @@ if (!mounted) return null;
         >
           <option value="">-- Select Category --</option>
           {categories.map((item) => (
-            <option value={item.name} key={item.id}>
+            <option value={item.id} key={item.id}>
               {item.name}
             </option>
           ))}
