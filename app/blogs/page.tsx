@@ -2,7 +2,7 @@ import React from 'react';
 import { categories, blogs } from '@/lib/utils';
 import BlogItem from '../components/BlogItem';
 
-const Blogspage = () => {
+const Blogspage = async () => {
   const truncateText = (html: string, limit: number) => {
     const textOnly = html.replace(/<[^>]*>/g, ""); // strip HTML tags
     return textOnly.length > limit ? textOnly.substring(0, limit) + "..." : textOnly;

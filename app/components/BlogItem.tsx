@@ -22,8 +22,8 @@ const BlogItem = (props: Props) => {
   return (
   <Card
   className="border-red-800 duration-500 
-             flex flex-col w-[600px] mx-4 my-2 border-4 bg-amber-50 
-             overflow-hidden transform transition-transform hover:scale-105"
+             flex flex-col w-[600px] mx-4 my-2 border-4 bg-orange-100 
+             overflow-hidden transform transition-transform hover:scale-101"
 >
   {/* Image */}
   <CardHeader className="p-0">
@@ -54,6 +54,7 @@ const BlogItem = (props: Props) => {
       <button className="ml-auto border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
         View More
       </button>
+      {/* Add Link To View More sButton */}
     </CardFooter>
   </div>
 </Card>

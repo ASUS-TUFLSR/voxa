@@ -2,9 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import dynamic from "next/dynamic";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import { Toaster, toast } from 'react-hot-toast';
 import { categories } from "@/lib/utils";
-import { convertToRaw, EditorState } from "draft-js";
+import { convertToRaw, EditorState, Modifier } from "draft-js";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -24,6 +26,7 @@ const WriteBlog = () => {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
 
@@ -53,6 +56,20 @@ const WriteBlog = () => {
   const convertEditorDataToHTML = () => {
     return draftToHtml(convertToRaw(editorState.getCurrentContent()))
   }
+
+  const handleEmojiSelect = (emoji: any) => {
+    // Insert emoji at current cursor position
+    const selection = editorState.getSelection();
+    const contentState = editorState.getCurrentContent();
+    const contentWithEmoji = Modifier.insertText(
+      contentState,
+      selection,
+      emoji.native
+    );
+    const newState = EditorState.push(editorState, contentWithEmoji, "insert-characters");
+    setEditorState(newState);
+    setShowEmojiPicker(false);
+  };
 
   const handlePublish = async (data: any) => {
     
@@ -178,6 +195,22 @@ const WriteBlog = () => {
 
       {/* Editor */}
       <Editor
+         toolbar={{
+          options: [
+            "inline",
+            "blockType",
+            "fontSize",
+            "fontFamily",
+            "list",
+            "textAlign",
+            "colorPicker",
+            "link",
+            "embedded",
+            "image",
+            "remove",
+            "history",
+          ],
+        }}
         editorState={editorState}
         onEditorStateChange={safeSetEditorState}
         editorStyle={{
@@ -189,6 +222,18 @@ const WriteBlog = () => {
           background: "#fff",
         }}
       />
+      <button
+        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+        className="mt-2 px-4 py-2 bg-orange-200 text-red-900 rounded"
+      >
+        😀 Emoji
+      </button>
+
+      {showEmojiPicker && (
+        <div className="mt-2">
+          <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+        </div>
+      )}
     </section>
   );
 };
