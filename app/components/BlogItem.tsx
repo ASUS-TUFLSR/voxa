@@ -1,28 +1,21 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { BlogItemType } from '@/lib/types';
 import Image from 'next/image';
 import React from 'react'
 
-type Props = {
-    id: string;
-    title: string;
-    description: string;
-    imageUrl: string;
-    userId: string;
-    createdAt: string;
-    updatedAt: string;
-    categoryId: string;
-    location: string; 
-}
+type Props = BlogItemType;
 
 const BlogItem = (props: Props) => {
   // Strip HTML tags before truncating to avoid breaking tags
   const plainText = props.description.replace(/<[^>]+>/g, "");
   const truncated = plainText.length > 100 ? plainText.slice(0, 100) + "..." : plainText;
 
+
+
   return (
   <Card
   className="border-red-800 duration-500 
-             flex flex-col w-[600px] mx-4 my-2 border-4 bg-orange-100 
+             flex flex-col w-[600px] mx-4 my-2 border-4 bg-orange-100 rounded-sm
              overflow-hidden transform transition-transform hover:scale-101"
 >
   {/* Image */}
@@ -32,7 +25,7 @@ const BlogItem = (props: Props) => {
       height={200}
       className="h-44 w-full p-1 object-cover"
       alt={props.title}
-      src="https://plus.unsplash.com/premium_photo-1674327105074-46dd8319164b?"
+      src={props.imageUrl}
     />
   </CardHeader>
 

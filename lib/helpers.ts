@@ -46,8 +46,24 @@ export const getAllBlogs = async (count?: number) => {
   }
 
   const data = await res.json();
-  const blogs = data?.blogs?.blog ?? [];
+  const blogs = data?.data?.blogs ?? [];
   return count ? blogs.slice(0, count) : blogs;
+
+
+};
+
+export const getAllCategories = async (count?: number) => {
+  const res = await fetch("http://localhost:3000/api/categories", {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch categories");
+  }
+
+  const data = await res.json();
+  const categories = data?.data?.categories ?? [];
+  return count ? categories.slice(0, count) : categories;
 
 
 };

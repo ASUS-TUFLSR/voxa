@@ -1,10 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
 import BlogItem from './BlogItem';
-import { blogs } from '@/lib/utils';
-// import { getAllBlogs } from '@/lib/helpers';
+import { getAllBlogs } from '@/lib/helpers';
+import { BlogItemType } from '@/lib/types';
 
 const HomeSection = async () => {
+
+  const blogs = await getAllBlogs();
  
   // Helper to truncate descriptions
   const truncateText = (html: string, limit: number) => {
@@ -53,7 +55,7 @@ const HomeSection = async () => {
           <h2 className="text-2xl font-semibold text-red-900">Recent Articles</h2>
         </div>
         <div className="flex flex-wrap w-full justify-center ">
-          {blogs.map((blog) => (
+          {blogs.map((blog: BlogItemType) => (
             <BlogItem
               key={blog.id}
               {...blog}
