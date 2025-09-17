@@ -1,6 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { BlogItemType } from '@/lib/types';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react'
 
 type Props = BlogItemType;
@@ -44,9 +45,9 @@ const BlogItem = (props: Props) => {
 
     {/* Footer */}
     <CardFooter className="px-4 pb-4 mt-auto">
-      <button className="ml-auto border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
+      <Link href={`/blogs/view/${props.id}`} className="ml-auto border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
         View More
-      </button>
+      </Link>
       {/* Add Link To View More sButton */}
     </CardFooter>
   </div>
