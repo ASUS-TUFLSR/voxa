@@ -42,7 +42,7 @@ const BlogsViewPage = async ({ params }: { params: Promise<{ id: string }> }) =>
 
         {/* Blog Content */}
         <article
-  className="prose prose-lg max-w-3xl mx-auto text-gray-800 [&_*]:bg-transparent [&_*]:shadow-none"
+  className="section max-w-3xl mx-auto text-gray-800"
   dangerouslySetInnerHTML={{ __html: blog.description }}
 ></article>
 

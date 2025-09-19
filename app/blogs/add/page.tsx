@@ -9,9 +9,9 @@ import { categories } from "@/lib/utils";
 import { convertToRaw, EditorState, Modifier } from "draft-js";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import draftToHtml from "draftjs-to-html";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const Editor = dynamic(() => import("react-draft-wysiwyg").then(mod => mod.Editor), {
   ssr: false,
@@ -195,25 +195,9 @@ const WriteBlog = () => {
 
       {/* Editor */}
       <Editor
-         toolbar={{
-          options: [
-            "inline",
-            "blockType",
-            "fontSize",
-            "fontFamily",
-            "list",
-            "textAlign",
-            "colorPicker",
-            "link",
-            "embedded",
-            "image",
-            "remove",
-            "history",
-          ],
-        }}
         editorState={editorState}
         onEditorStateChange={safeSetEditorState}
-        editorStyle={{
+       editorStyle={{
           width: "100%",
           minHeight: "50vh",
           border: "1px solid #ddd",

@@ -39,9 +39,7 @@ type ApiResponse<T> = {
  };
 
 export const getAllBlogs = async (count?: number) => {
-  const res = await fetch("http://localhost:3000/api/blogs", {
-    cache: "no-store",
-  });
+  const res = await fetch("http://localhost:3000/api/blogs");
 
   if (!res.ok) {
     throw new Error("Failed to fetch blogs");
