@@ -1,6 +1,8 @@
 import prisma from "@/prisma"
 import { NextResponse } from "next/server";
 
+// const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"; TO DO
+
 export const connectDB = async () => {
      try {
         await prisma.$connect();    
@@ -81,3 +83,17 @@ export const getAllCategories = async (count?: number) => {
 
 
 };
+
+// export const getCategoryById = async (id: string) => {
+//   const res = await fetch(`http://localhost:3000/api/categories/${id}`, {
+//     cache: "no-store",
+//   });
+
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch blog");
+//   }
+
+//   const data = await res.json();
+//   return data.data.categories;
+
+// };

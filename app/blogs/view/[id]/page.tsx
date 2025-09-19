@@ -2,17 +2,19 @@ import { getBlogById } from '@/lib/helpers';
 import { BlogItemType } from '@/lib/types';
 import React from 'react';
 
-const BlogsViewPage = async ({ params }: { params: { id: string } }) => {
-  const blog: BlogItemType = await getBlogById(params.id);
+const BlogsViewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  // ✅ Await params before using
+  const { id } = await params;
+  const blog: BlogItemType = await getBlogById(id);
 
   return (
     <section
       className="w-full min-h-screen flex flex-col"
-  style={{
-    backgroundImage: `url('https://static.wixstatic.com/media/d19037_5a46916c0c674a99bd20b2f72fd10e8e~mv2.jpg/v1/fill/w_1024,h_813,al_c,q_85,enc_avif,quality_auto/d19037_5a46916c0c674a99bd20b2f72fd10e8e~mv2.jpg')`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  }}
+      style={{
+        backgroundImage: `url('https://static.wixstatic.com/media/d19037_5a46916c0c674a99bd20b2f72fd10e8e~mv2.jpg/v1/fill/w_1024,h_813,al_c,q_85,enc_avif,quality_auto/d19037_5a46916c0c674a99bd20b2f72fd10e8e~mv2.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
     >
       {/* Content Wrapper */}
       <div className="bg-white/90 backdrop-blur-sm flex-1 py-10 px-6 sm:px-10 md:px-20 lg:px-32">
@@ -31,18 +33,18 @@ const BlogsViewPage = async ({ params }: { params: { id: string } }) => {
 
         {/* Blog Image */}
         <div className="w-full flex justify-center mb-8">
-  <img
-    src={blog.imageUrl}
-    alt={blog.title}
-    className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[600px] h-auto rounded-xl shadow-lg object-cover"
-  />
-</div>
+          <img
+            src={blog.imageUrl}
+            alt={blog.title}
+            className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[600px] h-auto rounded-xl shadow-lg object-cover"
+          />
+        </div>
 
         {/* Blog Content */}
         <article
-          className="prose prose-lg max-w-3xl mx-auto text-gray-800"
-          dangerouslySetInnerHTML={{ __html: blog.description }}
-        ></article>
+  className="prose prose-lg max-w-3xl mx-auto text-gray-800 [&_*]:bg-transparent [&_*]:shadow-none"
+  dangerouslySetInnerHTML={{ __html: blog.description }}
+></article>
 
         {/* Updated Date */}
         <p className="text-center text-xs text-gray-500 mt-10">
