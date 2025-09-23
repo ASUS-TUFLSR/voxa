@@ -7,56 +7,69 @@ import React from 'react'
 type Props = BlogItemType;
 
 const BlogItem = (props: Props) => {
-  // Strip HTML tags before truncating to avoid breaking tags
   const plainText = props.description.replace(/<[^>]+>/g, "");
   const truncated = plainText.length > 100 ? plainText.slice(0, 100) + "..." : plainText;
 
-
-
   return (
-  <Card
-  className="border-red-800 duration-500 
-             flex flex-col w-[600px] mx-4 my-2 border-4 bg-orange-100 rounded-sm
-             overflow-hidden transform transition-transform hover:scale-101"
->
-  {/* Image */}
-  <CardHeader className="p-0">
-    <Image
-      width={600}
-      height={200}
-      className="h-44 w-full p-1 object-cover"
-      alt={props.title}
-      src={props.imageUrl}
-    />
-  </CardHeader>
+    <Card
+      className="relative border-2 border-red-800/30 
+           w-full max-w-[600px] mx-4 my-6 rounded-2xl shadow-md 
+           hover:shadow-2xl overflow-hidden transition-all 
+           duration-500 hover:-translate-y-2
+           bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]
+           bg-repeat bg-amber-50"
+    >
+      {/* Subtle glowing highlight overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-red-200/10 to-transparent pointer-events-none"></div>
 
-  {/* Middle Content */}
-  <div className="flex flex-col flex-1">
-    <CardTitle className="px-4 pt-3 font-bold font-serif text-xl text-red-900">
-      {props.title}
-    </CardTitle>
+      {/* Image */}
+      <CardHeader className="p-0">
+        <Image
+  width={600}
+  height={200}
+  className="h-48 w-full object-cover rounded-t-2xl"
+  alt={`Blog cover image for ${props.title}`}
+  src={props.imageUrl}
+  loading="lazy"
+/>
+      </CardHeader>
 
-    <CardContent className="px-4 flex-1">
-      <div
-        dangerouslySetInnerHTML={{ __html: truncated }}
-        className="tracking-wide w-full text-left break-words"
-      ></div>
-    </CardContent>
+      {/* Content */}
+      <div className="flex flex-col flex-1 relative z-10">
+        <CardTitle className="px-5 pt-4 font-serif font-bold text-2xl text-red-900">
+          {props.title}
+        </CardTitle>
 
-    {/* Footer */}
-    <CardFooter className="px-4 pb-4 mt-auto">
-      <Link href={`/blogs/view/${props.id}`} className="ml-auto border-2 border-red-700 p-1 rounded-sm text-amber-100 bg-red-700 hover:bg-red-800 hover:text-amber-200 duration-500">
-        View More
-      </Link>
-      {/* Add Link To View More sButton */}
-    </CardFooter>
-  </div>
-</Card>
+        {/* Metadata */}
+        <p className="px-5 text-xs text-gray-600 italic mb-2">
+          ✍️ By {props.userId} · 📅 {new Date(props.createdAt).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+})}
+        </p>
 
+        <CardContent className="px-5 flex-1">
+          <p className="tracking-wide text-gray-700 leading-relaxed">
+            {truncated}
+          </p>
+        </CardContent>
 
+        {/* Footer */}
+        <CardFooter className="px-5 pb-5 mt-auto">
+          <Link
+            href={`/blogs/view/${props.id}`}
+            className="ml-auto px-4 py-2 rounded-md text-sm font-medium
+                       border border-red-700 bg-red-700 text-amber-50
+                       hover:bg-red-800 hover:border-red-800 hover:scale-105
+                       transition-all duration-300 shadow-sm"
+          >
+            Read More →
+          </Link>
+        </CardFooter>
+      </div>
+    </Card>
   );
 };
 
 export default BlogItem;
-
-

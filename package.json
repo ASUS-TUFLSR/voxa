@@ -12,6 +12,7 @@
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@prisma/client": "^6.7.0",
+    "@syncfusion/ej2-react-richtexteditor": "^31.1.21",
     "@tailwindcss/postcss": "^4.1.11",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",

@@ -1,5 +1,6 @@
 import { getBlogById } from '@/lib/helpers';
 import { BlogItemType } from '@/lib/types';
+import Image from 'next/image';
 import React from 'react';
 
 const BlogsViewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -33,7 +34,7 @@ const BlogsViewPage = async ({ params }: { params: Promise<{ id: string }> }) =>
 
         {/* Blog Image */}
         <div className="w-full flex justify-center mb-8">
-          <img
+          <Image width={300} height={300}
             src={blog.imageUrl}
             alt={blog.title}
             className="w-[300px] sm:w-[400px] md:w-[500px] lg:w-[600px] h-auto rounded-xl shadow-lg object-cover"
