@@ -3,6 +3,15 @@ import Provider from "./components/Provider";
 import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import "@syncfusion/ej2-base/styles/material.css";
+import "@syncfusion/ej2-buttons/styles/material.css";
+import "@syncfusion/ej2-inputs/styles/material.css";
+import "@syncfusion/ej2-popups/styles/material.css";
+import "@syncfusion/ej2-lists/styles/material.css";
+import "@syncfusion/ej2-navigations/styles/material.css";
+import "@syncfusion/ej2-splitbuttons/styles/material.css";
+import "@syncfusion/ej2-dropdowns/styles/material.css";
+import "@syncfusion/ej2-react-richtexteditor/styles/material.css";
 
 
 export const metadata = {

@@ -1,21 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import dynamic from "next/dynamic";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-import { Toaster, toast } from 'react-hot-toast';
-import { categories } from "@/lib/utils";
-import { convertToRaw, EditorState, Modifier } from "draft-js";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import draftToHtml from "draftjs-to-html";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-
-const Editor = dynamic(() => import("react-draft-wysiwyg").then(mod => mod.Editor), {
-  ssr: false,
-});
+import { Toaster, toast } from "react-hot-toast";
+import { categories } from "@/lib/utils";
+import BlogEditor from "../../components/BlogEditor";
 
 const WriteBlog = () => {
   const { data: session } = useSession();
@@ -26,9 +15,7 @@ const WriteBlog = () => {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
+  const [description, setDescription] = useState(""); // <-- rich text html here
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,81 +26,54 @@ const WriteBlog = () => {
     }
   };
 
-   
-   useEffect(() => {
+  useEffect(() => {
     return () => {
       if (imageUrl) URL.revokeObjectURL(imageUrl);
     };
-    }, [imageUrl]);
+  }, [imageUrl]);
 
-   useEffect(() => setMounted(true), []);
-   if (!mounted) return null;
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
 
-  const safeSetEditorState = (state: EditorState) => {
-  if (mounted) setEditorState(state);
-};
- 
-  const convertEditorDataToHTML = () => {
-    return draftToHtml(convertToRaw(editorState.getCurrentContent()))
-  }
-
-  const handleEmojiSelect = (emoji: any) => {
-    // Insert emoji at current cursor position
-    const selection = editorState.getSelection();
-    const contentState = editorState.getCurrentContent();
-    const contentWithEmoji = Modifier.insertText(
-      contentState,
-      selection,
-      emoji.native
-    );
-    const newState = EditorState.push(editorState, contentWithEmoji, "insert-characters");
-    setEditorState(newState);
-    setShowEmojiPicker(false);
-  };
-
-  const handlePublish = async (data: any) => {
-    
+  const handlePublish = async () => {
     const formData = new FormData();
-    const postData = JSON.stringify(
-      { 
-        author: session?.user?.name || "Anonymous",
-        title, 
-        description:convertEditorDataToHTML(),
-        location,
-        userId: session?.user?.id,
-        categoryId: category,
+    const postData = JSON.stringify({
+      author: session?.user?.name || "Anonymous",
+      title,
+      description, // from BlogEditor
+      location,
+      userId: session?.user?.id,
+      categoryId: category,
+    });
 
+    formData.append("postData", postData);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    try {
+      toast.loading("Sending your post to world 🌍", { id: "postData" });
+      await fetch("http://localhost:3000/api/blogs", {
+        method: "POST",
+        body: formData,
+        cache: "no-store",
       });
-
-      formData.append("postData", postData);
-      if (imageFile) {
-       formData.append("image", imageFile);
-      }
-
-      try {
-        toast.loading("Sending your post to world 🌍", { id: "postData" });
-        
-        await fetch("http://localhost:3000/api/blogs", {method: "POST", body: formData, cache:'no-store'})
-
-
-        toast.success("Sent your post to world 🌍", { id: "postData" })
-      } catch (error) {
-        toast.error("Failed to send", { id: "postData" });
-        console.log(error)
-      }
-
-
+      toast.success("Sent your post to world 🌍", { id: "postData" });
+    } catch (error) {
+      toast.error("Failed to send", { id: "postData" });
+      console.error(error);
+    }
   };
-
 
   return (
     <section className="w-full py-10 px-6 bg-orange-200">
       <Toaster position="top-right" />
+
       {/* Header */}
       <div
         className="flex justify-between p-4 items-center"
         style={{
-          backgroundImage: `url('https://static.wixstatic.com/media/d19037_a4a215b82b8c4063aaddf256b7a35653~mv2.jpg/v1/fill/w_1024,h_458,al_c,q_85,enc_avif,quality_auto/d19037_a4a215b82b8c4063aaddf256b7a35653~mv2.jpg')`,
+          backgroundImage: `url('https://static.wixstatic.com/media/d19037_a4a215b82b8c4063aaddf256b7a35653~mv2.jpg')`,
           backgroundSize: "cover",
         }}
       >
@@ -153,7 +113,7 @@ const WriteBlog = () => {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter Title!"
           className="outline-none border-none font-serif mx-auto p-4 text-2xl 
-       text-center font-bold text-red-900 w-full h-28"
+            text-center font-bold text-red-900 w-full h-28"
         />
       </div>
 
@@ -193,31 +153,8 @@ const WriteBlog = () => {
         </select>
       </div>
 
-      {/* Editor */}
-      <Editor
-        editorState={editorState}
-        onEditorStateChange={safeSetEditorState}
-       editorStyle={{
-          width: "100%",
-          minHeight: "50vh",
-          border: "1px solid #ddd",
-          padding: "10px",
-          borderRadius: "10px",
-          background: "#fff",
-        }}
-      />
-      <button
-        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-        className="mt-2 px-4 py-2 bg-orange-200 text-red-900 rounded"
-      >
-        😀 Emoji
-      </button>
-
-      {showEmojiPicker && (
-        <div className="mt-2">
-          <Picker data={data} onEmojiSelect={handleEmojiSelect} />
-        </div>
-      )}
+      {/* Rich Text Editor */}
+      <BlogEditor value={description} onChange={setDescription} />
     </section>
   );
 };

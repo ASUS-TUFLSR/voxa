@@ -1,5 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@syncfusion/ej2-base/styles/material.css";
+@import "@syncfusion/ej2-buttons/styles/material.css";
+@import "@syncfusion/ej2-inputs/styles/material.css";
+@import "@syncfusion/ej2-popups/styles/material.css";
+@import "@syncfusion/ej2-lists/styles/material.css";
+@import "@syncfusion/ej2-navigations/styles/material.css";
+@import "@syncfusion/ej2-splitbuttons/styles/material.css";
+@import "@syncfusion/ej2-dropdowns/styles/material.css";
+@import "@syncfusion/ej2-react-richtexteditor/styles/material.css";
 @import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 .section>h1 {
@@ -34,6 +43,29 @@ code {
   margin-top: 10px;
   margin-bottom: 10px;
   list-style-type: disc;
+}
+/* Remove unnecessary spacing */
+.e-richtexteditor {
+  border-radius: 0.375rem !important;
+  /* rounded-md */
+  border-color: #d1d5db !important;
+  /* Tailwind gray-300 */
+}
+
+/* Toolbar styling */
+.e-richtexteditor .e-toolbar {
+  border-bottom: 1px solid #e5e7eb;
+  /* Tailwind gray-200 */
+  background: #f9fafb;
+  /* Tailwind gray-50 */
+}
+
+/* Editor text area */
+.e-richtexteditor .e-rte-content {
+  padding: 1rem !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 @custom-variant dark (&:is(.dark *));
 
