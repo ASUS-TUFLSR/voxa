@@ -8,7 +8,19 @@ export type BlogItemType = {
     updatedAt: string;
     categoryId: string;
     location: string;
+    isProfile?: boolean;
 }
+
+export type UserItemType = {
+    id: string;
+    name: string;
+    email: string;
+    blogs: BlogItemType[];
+    _count:{blogs:number};
+    message:string;    
+}
+
+
 
 export type Category = {
     id: string;

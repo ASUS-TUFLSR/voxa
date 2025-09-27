@@ -57,6 +57,7 @@ const BlogItem = (props: Props) => {
 
         {/* Footer */}
         <CardFooter className="px-5 pb-5 mt-auto">
+          
           <Link
             href={`/blogs/view/${props.id}`}
             className="ml-auto px-4 py-2 rounded-md text-sm font-medium
@@ -66,6 +67,16 @@ const BlogItem = (props: Props) => {
           >
             Read More →
           </Link>
+          { props.isProfile && (<Link
+            href={`/blogs/edit/${props.id}`}
+            className="ml-auto px-4 py-2 rounded-md text-sm font-medium
+                       border border-red-700 bg-red-700 text-amber-50
+                       hover:bg-red-800 hover:border-red-800 hover:scale-105
+                       transition-all duration-300 shadow-sm"
+          >
+            Edit →
+          </Link>)}
+          
         </CardFooter>
       </div>
     </Card>

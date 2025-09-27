@@ -66,6 +66,20 @@ export const getBlogById = async (id: string) => {
 
 };
 
+export const getUserById = async (id: string) => {
+  const res = await fetch(`http://localhost:3000/api/users/${id}`, {
+    next:{revalidate:100}
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch blog");
+  }
+
+  const data = await res.json();
+  return data.data;
+
+};
+
 export const getAllCategories = async (count?: number) => {
   const res = await fetch("http://localhost:3000/api/categories", {
     cache: "no-store",
