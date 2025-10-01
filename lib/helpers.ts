@@ -62,7 +62,7 @@ export const getBlogById = async (id: string) => {
   }
 
   const data = await res.json();
-  return data.data.blog;
+  return data.data.blog; 
 
 };
 

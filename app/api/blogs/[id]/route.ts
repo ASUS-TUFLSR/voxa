@@ -7,7 +7,7 @@ export const GET = async (
   context: { params: { id: string } }
 ) => {
   try {
-    const { id } = context.params; // ✅ Correct way
+    const { id } = await context.params; // ✅ Correct way
     await connectDB();
 
     const blog = await prisma.blog.findFirst({ where: { id } });
