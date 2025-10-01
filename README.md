@@ -18,6 +18,7 @@
 - Created Blog Components
 - Switched From MYSWING <<<< SyncFusion 
 - Started Working on Profile Section
+- React.use() - When working with Next.js 15 or later, the params object, particularly when passed to Client Components from a Server Component, may be a Promise. To access its properties, it needs to be unwrapped using React.use().
 
 
 # Tech Stack

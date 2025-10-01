@@ -76,6 +76,8 @@ const BlogItem = (props: Props) => {
           >
             Edit →
           </Link>)}
+          {/* TODO adjust link button in profile page
+          TODO add a laoder when clicked on the view btn  */}
           
         </CardFooter>
       </div>
