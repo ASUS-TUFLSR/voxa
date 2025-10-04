@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Toaster, toast } from "react-hot-toast";
-import { categories } from "@/lib/utils";
 import BlogEditor from "../../../components/BlogEditor";
 import { BlogItemType } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -21,8 +21,9 @@ const getBlogById = async (id: string) => {
 
 const EditPage = ({ params }: Props) => {
   const resParams = React.use(params);
-
   const { data: session } = useSession();
+  const router = useRouter();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState(""); // plain HTML string
 
@@ -37,23 +38,27 @@ const EditPage = ({ params }: Props) => {
 
   const handlePublish = async () => {
     const postData = JSON.stringify({
-      id: resParams?.id,
-      author: session?.user?.name || "Anonymous",
       title,
-      description, // comes directly from BlogEditor
-      userId: session?.user?.id,
+      description, // ✅ only send what backend expects
     });
 
     try {
       toast.loading("Updating blog ✍️", { id: "postData" });
-      await fetch(`http://localhost:3000/api/blogs/${resParams?.id}`, {
+      const res = await fetch(`http://localhost:3000/api/blogs/${resParams?.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: postData,
       });
+
+      if (!res.ok) throw new Error("Failed to update");
+
       toast.success("Blog updated 🎉", { id: "postData" });
+      
+      // ✅ Redirect to profile after success
+      router.push("/profile");
+      router.refresh(); // ensures fresh data
     } catch (error) {
       toast.error("Failed to update", { id: "postData" });
       console.error(error);
@@ -97,7 +102,6 @@ const EditPage = ({ params }: Props) => {
             text-center font-bold text-red-900 w-full h-28"
         />
       </div>
-
 
       {/* Rich Text Editor */}
       <BlogEditor value={description} onChange={setDescription} />

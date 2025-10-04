@@ -67,9 +67,7 @@ export const getBlogById = async (id: string) => {
 };
 
 export const getUserById = async (id: string) => {
-  const res = await fetch(`http://localhost:3000/api/users/${id}`, {
-    next:{revalidate:100}
-  });
+  const res = await fetch(`http://localhost:3000/api/users/${id}`, { cache: "no-store" });
 
   if (!res.ok) {
     throw new Error("Failed to fetch blog");

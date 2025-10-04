@@ -11,6 +11,7 @@
 @import "@syncfusion/ej2-react-richtexteditor/styles/material.css";
 @import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
+
 .section>h1 {
   margin-top: 40px;
   margin-bottom: 40px;
