@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 import { Toaster, toast } from "react-hot-toast";
 import BlogEditor from "../../../components/BlogEditor";
 import { BlogItemType } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -25,43 +26,37 @@ const EditPage = ({ params }: Props) => {
   const router = useRouter();
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState(""); // plain HTML string
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getBlogById(resParams?.id ?? "")
+    if (!resParams?.id) return;
+
+    getBlogById(resParams.id)
       .then((data: BlogItemType) => {
         setTitle(data.title);
-        setDescription(data.description); // Syncfusion takes HTML directly
+        setDescription(data.description);
       })
-      .catch((err) => console.error(err));
+      .catch(() => toast.error("Failed to load blog data"))
+      .finally(() => setLoading(false));
   }, [resParams?.id]);
 
-  const handlePublish = async () => {
-    const postData = JSON.stringify({
-      title,
-      description, // ✅ only send what backend expects
-    });
-
+  const updateBlog = async () => {
     try {
       toast.loading("Updating blog ✍️", { id: "postData" });
-      const res = await fetch(`http://localhost:3000/api/blogs/${resParams?.id}`, {
+      const res = await fetch(`/api/blogs/${resParams?.id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: postData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description }),
       });
 
       if (!res.ok) throw new Error("Failed to update");
 
       toast.success("Blog updated 🎉", { id: "postData" });
-      
-      // ✅ Redirect to profile after success
       router.push("/profile");
-      router.refresh(); // ensures fresh data
-    } catch (error) {
+      router.refresh();
+    } catch {
       toast.error("Failed to update", { id: "postData" });
-      console.error(error);
     }
   };
 
@@ -84,7 +79,7 @@ const EditPage = ({ params }: Props) => {
           </span>
         </div>
         <button
-          onClick={handlePublish}
+          onClick={updateBlog}
           className="bg-red-700 text-orange-200 px-6 focus:ring-red-900 py-3 rounded-xl 
             font-semibold shadow-xl hover:bg-red-800"
         >
@@ -92,16 +87,21 @@ const EditPage = ({ params }: Props) => {
         </button>
       </div>
 
-      {/* Title Input */}
-      <div className="w-full flex my-5">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter Title!"
-          className="outline-none border-none font-serif mx-auto p-4 text-2xl 
-            text-center font-bold text-red-900 w-full h-28"
-        />
-      </div>
+      {/* Title Input / Skeleton */}
+      <div className="w-full flex my-5 justify-center items-center">
+  {loading ? (
+    <Skeleton className="h-14 w-xl rounded-md" />
+  ) : (
+    <input
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      placeholder="Enter Title!"
+      className="outline-none border-none font-serif mx-auto p-4 text-2xl 
+        text-center font-bold text-red-900 w-full h-28 bg-transparent"
+    />
+  )}
+</div>
+
 
       {/* Rich Text Editor */}
       <BlogEditor value={description} onChange={setDescription} />
