@@ -3,6 +3,8 @@ import Provider from "./components/Provider";
 import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";
 import { registerLicense } from '@syncfusion/ej2-base'
+import RouteLoader from "./components/RouteLoader";
+
 
 registerLicense(process.env.NEXT_PUBLIC_SYNCFUSION_KEY || '');
 
@@ -20,8 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col" >
+        <RouteLoader />
         <Provider>
           <Appbar/>
+           
           <main className="flex-1" >
             {children}
           </main>
