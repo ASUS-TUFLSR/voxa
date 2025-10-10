@@ -4,23 +4,31 @@ import React, { useState, useMemo } from "react";
 import BlogItem from "../components/BlogItem";
 import { BlogItemType, Category } from "@/lib/types";
 
-const BlogList = ({ blogs, categories }: { blogs: BlogItemType[]; categories: Category[] }) => {
+interface BlogListProps {
+  blogs: BlogItemType[];
+  categories: Category[];
+}
+
+const BlogList: React.FC<BlogListProps> = ({ blogs, categories }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
+  // 🔹 Utility to strip HTML & truncate text
   const truncateText = (html: string, limit: number) => {
     const textOnly = html.replace(/<[^>]*>/g, "");
     return textOnly.length > limit ? textOnly.substring(0, limit) + "..." : textOnly;
   };
 
-  // ✅ Filter blogs based on search + category
+  // 🔹 Filter blogs efficiently with useMemo
   const filteredBlogs = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+
     return blogs.filter((blog) => {
       const matchesCategory = selectedCategory ? blog.categoryId === selectedCategory : true;
       const matchesSearch =
-        blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        blog.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        blog.location.toLowerCase().includes(searchQuery.toLowerCase());
+        blog.title.toLowerCase().includes(query) ||
+        blog.description.toLowerCase().includes(query) ||
+        blog.location.toLowerCase().includes(query);
 
       return matchesCategory && matchesSearch;
     });
@@ -28,15 +36,19 @@ const BlogList = ({ blogs, categories }: { blogs: BlogItemType[]; categories: Ca
 
   return (
     <>
-      <nav className="bg-red-100 border w-full flex flex-col sm:sticky z-50 top-0 gap-4 p-4 rounded mt-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center w-full md:justify-between gap-4">
+      {/* 🔹 Filter & Search Bar */}
+      <nav className="bg-red-100 border w-full flex flex-col sm:sticky top-0 z-50 gap-4 p-4 rounded-lg mt-6 shadow-sm">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full">
           {/* Category Filter */}
           <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
-            <p className="font-semibold text-lg md:text-xl">Filter</p>
+            <label htmlFor="category" className="font-semibold text-lg text-red-900">
+              Filter:
+            </label>
             <select
+              id="category"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 rounded border border-red-300 w-full md:w-48 bg-red-100"
+              className="px-3 py-2 rounded-md border border-red-300 bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all"
             >
               <option value="">All Categories</option>
               {categories.map((category) => (
@@ -47,28 +59,28 @@ const BlogList = ({ blogs, categories }: { blogs: BlogItemType[]; categories: Ca
             </select>
           </div>
 
-          {/* Search */}
-          <div className="flex flex-col w-full md:flex-1">
-            <label htmlFor="search" className="sr-only">Search</label>
+          {/* Search Input */}
+          <div className="flex flex-col w-full md:w-1/2">
+            <label htmlFor="search" className="sr-only">
+              Search
+            </label>
             <input
-              type="text"
               id="search"
+              type="text"
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-2 rounded border border-gray-300 w-full"
+              className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all"
             />
           </div>
         </div>
       </nav>
 
-      {/* Blog List */}
-      <div className="flex flex-col justify-center items-center ">
-        <div className="p-4">
-          <h2 className="text-2xl font-semibold text-red-900">Recent Articles</h2>
-        </div>
-        {/* TODO Add 3 blogs per row */}
-        <div className="flex flex-wrap w-full justify-center my-1">
+      {/* 🔹 Blog Grid */}
+      <section className="flex flex-col justify-center items-center py-8">
+        <h2 className="text-2xl font-semibold text-red-900 mb-6">Recent Articles</h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-8 w-full max-w-7xl">
           {filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (
               <BlogItem
@@ -78,10 +90,12 @@ const BlogList = ({ blogs, categories }: { blogs: BlogItemType[]; categories: Ca
               />
             ))
           ) : (
-            <p className="text-gray-600">No blogs found 🚫</p>
+            <p className="text-gray-600 text-center col-span-full">
+              No blogs found 🚫
+            </p>
           )}
         </div>
-      </div>
+      </section>
     </>
   );
 };
