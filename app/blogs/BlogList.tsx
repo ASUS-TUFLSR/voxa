@@ -67,6 +67,7 @@ const BlogList = ({ blogs, categories }: { blogs: BlogItemType[]; categories: Ca
         <div className="p-4">
           <h2 className="text-2xl font-semibold text-red-900">Recent Articles</h2>
         </div>
+        {/* TODO Add 3 blogs per row */}
         <div className="flex flex-wrap w-full justify-center my-1">
           {filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (

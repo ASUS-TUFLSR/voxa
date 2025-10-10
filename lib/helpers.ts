@@ -1,109 +1,101 @@
-import prisma from "@/prisma"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import prisma from "@/prisma";
 import { NextResponse } from "next/server";
 
-// const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"; TO DO
+// ✅ Dynamic Base URL for local & production
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+/* --------------------------------------------------
+   DATABASE CONNECTION
+-------------------------------------------------- */
 export const connectDB = async () => {
-     try {
-        await prisma.$connect();    
-     } catch (err: any) {
-        throw new Error(err);
-     } 
+  try {
+    await prisma.$connect();
+    console.log("✅ Database connected successfully.");
+  } catch (err: any) {
+    console.error("❌ Database connection failed:", err);
+    throw new Error(err.message || "Failed to connect to database");
+  }
+};
+
+// Automatically disconnect Prisma when hot reloading in dev
+if (process.env.NODE_ENV !== "production") {
+  process.once("SIGUSR2", async () => {
+    await prisma.$disconnect();
+  });
 }
 
+/* --------------------------------------------------
+   STANDARDIZED API RESPONSES
+-------------------------------------------------- */
 type ApiResponse<T> = {
-   success: boolean;
-   message: string;
-   data?: T;
-   error?: any;
- };
- 
- export const generateSuccessMessage = <T>(data: T, status: number = 200) => {
-   const response: ApiResponse<T> = {
-     success: true,
-     message: "Success",
-     data,
-   };
- 
-   return NextResponse.json(response, { status });
- };
- 
- export const generateErrorMessage = (error: any, status: number = 500) => {
-   const response: ApiResponse<null> = {
-     success: false,
-     message: "Error",
-     error: error?.message || error || "Unknown error",
-   };
- 
-   return NextResponse.json(response, { status });
- };
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: string;
+};
 
-export const getAllBlogs = async (count?: number) => {
-  const res = await fetch("http://localhost:3000/api/blogs");
+export const generateSuccessMessage = <T>(
+  data: T,
+  status: number = 200
+) => {
+  return NextResponse.json<ApiResponse<T>>(
+    { success: true, message: "Success", data },
+    { status }
+  );
+};
+
+export const generateErrorMessage = (error: any, status: number = 500) => {
+  return NextResponse.json<ApiResponse<null>>(
+    {
+      success: false,
+      message: "Error",
+      error: error?.message || "Unknown error occurred",
+    },
+    { status }
+  );
+};
+
+/* --------------------------------------------------
+   GENERIC FETCH WRAPPER
+-------------------------------------------------- */
+const fetchData = async <T>(endpoint: string, cache: RequestCache = "no-store"): Promise<T> => {
+  const res = await fetch(`${BASE_URL}${endpoint}`, { cache });
 
   if (!res.ok) {
-    throw new Error("Failed to fetch blogs");
+    const text = await res.text();
+    throw new Error(`Fetch failed (${res.status}): ${text || res.statusText}`);
   }
 
   const data = await res.json();
-  const blogs = data?.data?.blogs ?? [];
+  return data?.data as T;
+};
+
+/* --------------------------------------------------
+   API HELPERS
+-------------------------------------------------- */
+export const getAllBlogs = async (count?: number) => {
+  const { blogs } = await fetchData<{ blogs: any[] }>("/api/blogs");
   return count ? blogs.slice(0, count) : blogs;
-
-
 };
 
 export const getBlogById = async (id: string) => {
-  const res = await fetch(`http://localhost:3000/api/blogs/${id}`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch blog");
-  }
-
-  const data = await res.json();
-  return data.data.blog; 
-
+  const { blog } = await fetchData<{ blog: any }>(`/api/blogs/${id}`);
+  return blog;
 };
 
 export const getUserById = async (id: string) => {
-  const res = await fetch(`http://localhost:3000/api/users/${id}`, { cache: "no-store" });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch blog");
-  }
-
-  const data = await res.json();
-  return data.data;
-
+  const user = await fetchData(`/api/users/${id}`);
+  return user;
 };
 
 export const getAllCategories = async (count?: number) => {
-  const res = await fetch("http://localhost:3000/api/categories", {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch categories");
-  }
-
-  const data = await res.json();
-  const categories = data?.data?.categories ?? [];
+  const { categories } = await fetchData<{ categories: any[] }>("/api/categories");
   return count ? categories.slice(0, count) : categories;
-
-
 };
 
+// Uncomment if needed later
 // export const getCategoryById = async (id: string) => {
-//   const res = await fetch(`http://localhost:3000/api/categories/${id}`, {
-//     cache: "no-store",
-//   });
-
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch blog");
-//   }
-
-//   const data = await res.json();
-//   return data.data.categories;
-
+//   const { category } = await fetchData<{ category: any }>(`/api/categories/${id}`);
+//   return category;
 // };
