@@ -85,8 +85,14 @@ export const getBlogById = async (id: string) => {
 };
 
 export const getUserById = async (id: string) => {
-  const user = await fetchData(`/api/users/${id}`);
-  return user;
+  if (!id) return null;
+  return await prisma.user.findUnique({
+    where: { id },
+    include: {
+      blogs: true,
+      _count: { select: { blogs: true } },
+    },
+  });
 };
 
 export const getAllCategories = async (count?: number) => {
