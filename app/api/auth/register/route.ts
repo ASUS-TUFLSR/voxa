@@ -1,39 +1,34 @@
-import { connectDB } from "@/lib/helpers";
-import prisma from "@/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import prisma from "@/prisma";
 
-export const POST = async (req: Request) => {
-  const { name, email, password } = await req.json();
-
-  if (!name || !email || !password) {
-    return NextResponse.json({ message: "Invalid Data" }, { status: 422 });
-  }
-
+export async function POST(req: Request) {
   try {
-    await connectDB();
+    const { name, email, password } = await req.json();
+
+    if (!name || !email || !password)
+      return NextResponse.json({ message: "All fields required" }, { status: 400 });
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser)
+      return NextResponse.json({ message: "User already exists" }, { status: 409 });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-        data: { email, name, password: hashedPassword },
-        select: { id: true, name: true, email: true, profileUrl: true },
-      });
-
-    return NextResponse.json({
-        message: "User successfully created",
-        ...user,
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
       },
+    });
+
+    return NextResponse.json(
+      { message: "User registered successfully", user: newUser },
       { status: 201 }
     );
-  } catch (err: any) {
-    return NextResponse.json(
-      {
-        message: "Server Error",
-        error: err.message,
-        code: err.code,
-      },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
-};
+}

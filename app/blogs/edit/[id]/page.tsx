@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useState, useEffect, use } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Toaster, toast } from "react-hot-toast";
 import BlogEditor from "../../../components/BlogEditor";
 import { BlogItemType } from "@/lib/types";
@@ -22,7 +22,7 @@ const getBlogById = async (id: string) => {
 
 const EditPage = ({ params }: Props) => {
   const resParams = React.use(params);
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -75,7 +75,7 @@ const EditPage = ({ params }: Props) => {
         <div className="w-1/4">
           <span className="font-extrabold mx-3 text-white">Author:</span>
           <span className="font-semibold uppercase text-white">
-            {session?.user?.name ?? "Guest"}
+            {user?.name ?? "Guest"}
           </span>
         </div>
         <button

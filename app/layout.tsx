@@ -24,8 +24,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col" >
         <RouteLoader />
         <Provider>
-          <Appbar/>
-           
+          <Appbar/>    
           <main className="flex-1" >
             {children}
           </main>
