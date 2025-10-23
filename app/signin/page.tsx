@@ -1,48 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
 
-export default function LoginPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/hooks/useAuth";
 
-  const handleLogin = async (e: React.FormEvent) => {
+export default function SignInPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { setToken } = useAuth();
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      window.location.href = "/";
-    } else {
-      alert(data.message || "Invalid credentials");
+      // expected: { token: "..." }
+      setToken(data.token);
+      router.push("/profile");
+    } catch (err: any) {
+      alert(err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold mb-4">Sign In</h1>
-      <form onSubmit={handleLogin} className="flex flex-col gap-2 w-80">
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="border p-2 rounded"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="border p-2 rounded"
-        />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Login
+    <main className="max-w-md mx-auto py-12">
+      <h1 className="text-2xl font-bold mb-6">Sign In</h1>
+      <form onSubmit={submit} className="space-y-4">
+        <input value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Email" type="email" className="w-full p-3 border rounded" />
+        <input value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" type="password" className="w-full p-3 border rounded" />
+        <button disabled={loading} className="w-full p-3 bg-red-700 text-white rounded">
+          {loading ? "Signing in…" : "Sign In"}
         </button>
       </form>
-    </div>
+    </main>
   );
 }

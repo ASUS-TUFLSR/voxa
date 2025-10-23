@@ -1,6 +1,8 @@
 "use client";
+
 import Link from "next/link";
 import Logo from "./Logo";
+import React from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 const authLinks = [
@@ -16,9 +18,27 @@ const nonAuthLinks = [
   { id: "2-3", name: "Register", url: "/register" },
 ];
 
-const Appbar = () => {
-  
-  const { isAuthenticated, logout } = useAuth();
+export default function Appbar() {
+  const { loading, isAuthenticated, logout } = useAuth();
+
+  // While auth state is resolving, render a neutral, stable UI to avoid hydration mismatch
+  if (loading) {
+    return (
+      <section className="sticky top-0 w-full bg-red-900 z-50">
+        <nav className="flex items-center justify-between px-8 py-4">
+          <Logo />
+          <div className="flex items-center gap-4 p-2">
+            {/* show a lightweight skeleton or static links while loading */}
+            {nonAuthLinks.map((item) => (
+              <Link key={item.id} href={item.url} className="text-amber-100 text-lg font-serif opacity-60">
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </section>
+    );
+  }
 
   const links = isAuthenticated ? authLinks : nonAuthLinks;
 
@@ -27,22 +47,14 @@ const Appbar = () => {
       <nav className="flex items-center justify-between px-8 py-4">
         <Logo />
         <div className="flex items-center gap-4 p-2">
-          {(links ? authLinks : nonAuthLinks).map((item) => (
-            <Link
-              href={item.url}
-              key={item.id}
-              className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300"
-            >
+          {links.map((item) => (
+            <Link key={item.id} href={item.url} className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300">
               {item.name}
             </Link>
           ))}
 
-          {/* ✅ Logout button when authenticated */}
-          {links && (
-            <button
-              onClick={() => logout()} // redirect to homepage after logout
-              className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300"
-            >
+          {isAuthenticated && (
+            <button onClick={logout} className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300">
               Logout
             </button>
           )}
@@ -50,6 +62,4 @@ const Appbar = () => {
       </nav>
     </section>
   );
-};
-
-export default Appbar;
+}

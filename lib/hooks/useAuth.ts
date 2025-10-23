@@ -1,45 +1,66 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {jwtDecode} from "jwt-decode";
+import { useRouter } from "next/navigation";
 
-interface DecodedUser {
+type DecodedToken = {
   id: string;
-  name: string;
-  email: string;
-  iat?: number;
+  name?: string;
+  email?: string;
   exp?: number;
-}
+  iat?: number;
+};
 
-export const useAuth = () => {
-  const [user, setUser] = useState<DecodedUser | null>(null);
+export function useAuth() {
+  const [user, setUser] = useState<DecodedToken | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode<DecodedUser>(token);
-        if (decoded.exp && decoded.exp * 1000 < Date.now()) {
-          localStorage.removeItem("token"); // expired token
-          setUser(null);
-        } else {
-          setUser(decoded);
-        }
-      } catch {
-        setUser(null);
-      }
-    } else {
+  const loadFromStorage = useCallback(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) {
       setUser(null);
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    try {
+      const decoded = jwtDecode<DecodedToken>(token);
+      if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+        localStorage.removeItem("token");
+        setUser(null);
+      } else {
+        setUser(decoded);
+      }
+    } catch (err) {
+      console.error("Invalid token", err);
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const logout = () => {
+  useEffect(() => {
+    loadFromStorage();
+    // optionally listen storage events (multi-tab signout)
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "token") loadFromStorage();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [loadFromStorage]);
+
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
-    window.location.href = "/signin"; // redirect to signin
-  };
+    router.push("/signin");
+  }, [router]);
 
-  return { user, loading, isAuthenticated: !!user, logout };
-};
+  const setToken = useCallback((token: string) => {
+    localStorage.setItem("token", token);
+    loadFromStorage();
+  }, [loadFromStorage]);
+
+  return { user, loading, isAuthenticated: !!user, logout, setToken };
+}
