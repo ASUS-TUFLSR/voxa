@@ -4,6 +4,7 @@ import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";
 import { registerLicense } from '@syncfusion/ej2-base'
 import RouteLoader from "./components/RouteLoader";
+import { AuthProvider } from "@/lib/hooks/useAuth";
 
 
 registerLicense(process.env.NEXT_PUBLIC_SYNCFUSION_KEY || '');
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col" >
+        <AuthProvider>
         <RouteLoader />
         <Provider>
           <Appbar/>    
@@ -30,6 +32,7 @@ export default function RootLayout({
           </main>
           <Footer/>
         </Provider>
+        </AuthProvider>
       </body>
     </html>
   );

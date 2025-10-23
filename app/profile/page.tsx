@@ -7,8 +7,10 @@ import { MdEmail } from "react-icons/md";
 import BlogItem from "../components/BlogItem";
 import { useRouter } from "next/navigation";
 import {jwtDecode} from "jwt-decode";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function ProfilePage() {
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [userData, setUserData] = useState<any>(null);
 
@@ -32,12 +34,19 @@ export default function ProfilePage() {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push("/signin");
+    }
+  }, [loading, isAuthenticated, router]);
+
   if (!userData)
     return (
       <div className="flex justify-center items-center h-screen">
         <p>Loading profile...</p>
       </div>
     );
+  if(!isAuthenticated) return null;
 
   return (
     <section

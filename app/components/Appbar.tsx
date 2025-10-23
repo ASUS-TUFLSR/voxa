@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import React from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 const authLinks = [
@@ -20,17 +21,28 @@ const nonAuthLinks = [
 
 export default function Appbar() {
   const { loading, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // While auth state is resolving, render a neutral, stable UI to avoid hydration mismatch
+  // 🔹 Handle logout and redirect to signin
+  const handleLogout = () => {
+    logout();
+    router.push("/signin");
+  };
+
+  // 🕐 While auth state is resolving
   if (loading) {
     return (
       <section className="sticky top-0 w-full bg-red-900 z-50">
         <nav className="flex items-center justify-between px-8 py-4">
           <Logo />
           <div className="flex items-center gap-4 p-2">
-            {/* show a lightweight skeleton or static links while loading */}
             {nonAuthLinks.map((item) => (
-              <Link key={item.id} href={item.url} className="text-amber-100 text-lg font-serif opacity-60">
+              <Link
+                key={item.id}
+                href={item.url}
+                className="text-amber-100 text-lg font-serif opacity-60"
+              >
                 {item.name}
               </Link>
             ))}
@@ -47,14 +59,26 @@ export default function Appbar() {
       <nav className="flex items-center justify-between px-8 py-4">
         <Logo />
         <div className="flex items-center gap-4 p-2">
-          {links.map((item) => (
-            <Link key={item.id} href={item.url} className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300">
-              {item.name}
-            </Link>
-          ))}
+          {links.map((item) => {
+            const active = pathname === item.url;
+            return (
+              <Link
+                key={item.id}
+                href={item.url}
+                className={`text-amber-100 text-lg font-serif hover:text-amber-200 duration-300 ${
+                  active ? "underline underline-offset-4" : ""
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
 
           {isAuthenticated && (
-            <button onClick={logout} className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300">
+            <button
+              onClick={handleLogout}
+              className="text-amber-100 text-lg font-serif hover:text-amber-200 duration-300"
+            >
               Logout
             </button>
           )}
