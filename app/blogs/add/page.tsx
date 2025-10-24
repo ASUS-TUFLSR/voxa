@@ -1,13 +1,16 @@
 "use client";
+
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { Toaster, toast } from "react-hot-toast";
 import { categories } from "@/lib/utils";
 import BlogEditor from "../../components/BlogEditor";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
-const WriteBlog = () => {
-  const { data: session } = useSession();
+export default function WriteBlog() {
+  const { user, token, loading, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
@@ -15,7 +18,14 @@ const WriteBlog = () => {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
-  const [description, setDescription] = useState(""); // <-- rich text html here
+  const [description, setDescription] = useState("");
+
+  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace("/signin");
+    }
+  }, [loading, isAuthenticated, router]);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,44 +42,51 @@ const WriteBlog = () => {
     };
   }, [imageUrl]);
 
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
-
   const handlePublish = async () => {
+    if (!token) {
+      toast.error("You must be logged in to publish");
+      return;
+    }
+
     const formData = new FormData();
     const postData = JSON.stringify({
-      author: session?.user?.name || "Anonymous",
+      author: user?.name || "Anonymous",
       title,
-      description, // from BlogEditor
+      description,
       location,
-      userId: session?.user?.id,
+      userId: user?.id,
       categoryId: category,
     });
 
     formData.append("postData", postData);
-    if (imageFile) {
-      formData.append("image", imageFile);
-    }
+    if (imageFile) formData.append("image", imageFile);
 
     try {
-      toast.loading("Sending your post to world 🌍", { id: "postData" });
-      await fetch("http://localhost:3000/api/blogs", {
+      toast.loading("Publishing your post...", { id: "postData" });
+      const res = await fetch("/api/blogs", {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
-        cache: "no-store",
       });
-      toast.success("Sent your post to world 🌍", { id: "postData" });
+      if (!res.ok) throw new Error("Failed to publish");
+      toast.success("Blog published successfully!", { id: "postData" });
+      router.push("/blogs");
     } catch (error) {
-      toast.error("Failed to send", { id: "postData" });
+      toast.error("Failed to publish blog", { id: "postData" });
       console.error(error);
     }
   };
+
+  if (!mounted || loading) {
+    return <p className="text-center py-10">Loading...</p>;
+  }
+
+  if (!isAuthenticated) return null;
 
   return (
     <section className="w-full py-10 px-6 bg-orange-200">
       <Toaster position="top-right" />
 
-      {/* Header */}
       <div
         className="flex justify-between p-4 items-center"
         style={{
@@ -80,19 +97,17 @@ const WriteBlog = () => {
         <div className="w-1/4">
           <span className="font-extrabold mx-3 text-white">Author:</span>
           <span className="font-semibold uppercase text-white">
-            {session?.user?.name ?? "Guest"}
+            {user?.name ?? "Guest"}
           </span>
         </div>
         <button
           onClick={handlePublish}
-          className="bg-red-700 text-orange-200 px-6 focus:ring-red-900 py-3 rounded-xl 
-            font-semibold shadow-xl hover:bg-red-800"
+          className="bg-red-700 text-orange-200 px-6 py-3 rounded-xl font-semibold shadow-xl hover:bg-red-800"
         >
           Publish
         </button>
       </div>
 
-      {/* Uploaded Image */}
       {imageUrl && (
         <div className="flex justify-center my-10">
           <Image
@@ -100,24 +115,20 @@ const WriteBlog = () => {
             alt="New Post"
             width={600}
             height={400}
-            className="rounded-lg shadow-xl border-[3px] border-slate-100 
-              max-w-[600px] max-h-[400px] w-auto h-auto object-contain"
+            className="rounded-lg shadow-xl border-[3px] border-slate-100 max-w-[600px] max-h-[400px] w-auto h-auto object-contain"
           />
         </div>
       )}
 
-      {/* Title Input */}
       <div className="w-full flex my-5">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter Title!"
-          className="outline-none border-none font-serif mx-auto p-4 text-2xl 
-            text-center font-bold text-red-900 w-full h-28"
+          className="outline-none border-none font-serif mx-auto p-4 text-2xl text-center font-bold text-red-900 w-full h-28"
         />
       </div>
 
-      {/* File Input */}
       <div className="w-full flex my-5">
         <input
           onChange={handleImageChange}
@@ -126,7 +137,6 @@ const WriteBlog = () => {
         />
       </div>
 
-      {/* Location */}
       <div className="w-full flex my-5">
         <input
           value={location}
@@ -137,7 +147,6 @@ const WriteBlog = () => {
         />
       </div>
 
-      {/* Category Select */}
       <div className="w-full flex my-5">
         <select
           value={category}
@@ -153,10 +162,7 @@ const WriteBlog = () => {
         </select>
       </div>
 
-      {/* Rich Text Editor */}
       <BlogEditor value={description} onChange={setDescription} />
     </section>
   );
-};
-
-export default WriteBlog;
+}

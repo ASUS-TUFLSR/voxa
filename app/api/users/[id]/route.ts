@@ -16,7 +16,9 @@ export const GET = async (
     let user;
 
     if (isObjectId) {
-      user = await prisma.user.findUnique({ where: { id } });
+      user = await prisma.user.findUnique({ 
+        where: { id },include: { blogs: true, _count: { select: { blogs: true } } } },);
+      
     } else {
       // ✅ Fallback to email-based lookup (for OAuth users)
       user = await prisma.user.findUnique({ where: { email: id } });
