@@ -62,15 +62,15 @@ export default function ProfilePage() {
     <section
       className="min-h-screen w-full flex flex-col items-center relative"
       style={{
-        backgroundImage: `url('https://images.rawpixel.com/image_800/cHJpdmF0ZS9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsb2ZmaWNlMjBfYV9wYXBlcl90ZXh0dXJlX29mX3NjcmliYmxlX3N0cm9rZV9zaW1wbGVfYW5kX181Mjg2OWM4YS02NGViLTQ2M2EtYmUzMC1hNDY2Zjc2Mjc5YTFfMS5qcGc.jpg')`,
+        backgroundImage: `url('https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsb2ZmaWNlMjBfYV9wYXBlcl90ZXh0dXJlX29mX3NjcmliYmxlX3N0cm9rZV9zaW1wbGVfYW5kX181Mjg2OWM4YS02NGViLTQ2M2EtYmUzMC1hNDY2Zjc2Mjc5YTFfMS5qcGc.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px]"></div>
+      <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
 
       {/* Profile Card */}
-      <div className="relative z-10 mt-12 bg-white/90 shadow-xl rounded-2xl px-10 py-8 max-w-2xl text-center border border-red-200">
+      <div className="relative z-10 mt-12 bg-white/60 shadow-xl rounded-2xl px-10 py-8 max-w-2xl text-center border border-red-200">
         <div className="flex flex-col items-center">
           <Image
             className="rounded-full border-4 border-red-300 shadow-lg object-cover"

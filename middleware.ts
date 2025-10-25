@@ -1,32 +1,67 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-// import jwt from "jsonwebtoken";
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+// Define protected routes
+const protectedRoutes = ["/profile", "/create", "/edit"];
 
-  // TEMPORARY DEBUG MODE
-  console.log("🔍 Middleware Debug -> token:", token);
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-  // Disable protection temporarily for debugging
-  // if (req.nextUrl.pathname.startsWith("/write") || req.nextUrl.pathname.startsWith("/profile")) {
-  //   if (!token) {
-  //     console.log("❌ No token found, redirecting to /signin");
-  //     return NextResponse.redirect(new URL("/signin", req.url));
-  //   }
+  // Allow static files and public routes
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/signin") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/register") ||
+    pathname === "/"
+  ) {
+    return NextResponse.next();
+  }
 
-  //   try {
-  //     jwt.verify(token, process.env.JWT_SECRET!);
-  //     console.log("✅ Token verified successfully");
-  //   } catch {
-  //     console.log("⚠️ Invalid token, redirecting to /signin");
-  //     return NextResponse.redirect(new URL("/signin", req.url));
-  //   }
-  // }
+  // Check if current route is protected
+  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
+
+  if (isProtected) {
+    const token = req.cookies.get("token")?.value;
+
+    if (!token) {
+      // Redirect to signin if no token found
+      const redirectUrl = new URL("/signin", req.url);
+      redirectUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    try {
+      // Optionally verify token (backend-safe way)
+      const res = await fetch(`${req.nextUrl.origin}/api/auth/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        const redirectUrl = new URL("/signin", req.url);
+        redirectUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(redirectUrl);
+      }
+
+      return NextResponse.next();
+    } catch (error) {
+      console.error("Middleware token verification failed:", error);
+      const redirectUrl = new URL("/signin", req.url);
+      redirectUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
 
   return NextResponse.next();
 }
 
+// Limit middleware to relevant routes only
 export const config = {
-  matcher: ["/write", "/profile"], // keep it here for future use
+  matcher: ["/profile", "/blogs/add", "/edit/:path*"],
 };

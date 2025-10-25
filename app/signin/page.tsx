@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -10,27 +9,30 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth(); // ✅ use login() instead of setToken()
+  const { login } = useAuth();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await res.json();
+
       if (!res.ok) throw new Error(data.message || "Login failed");
 
-      // expected response: { token, user }
-      if (data.token && data.user) {
-  login(data.token, data.user);
-  router.push("/profile");
-} else {
-  throw new Error("Invalid login response");
-}
+      if (data.user) {
+        // ✅ Store minimal info locally
+        login(data.token, data.user);
+        router.push("/profile");
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (err: any) {
       alert(err.message || "Login failed");
     } finally {
@@ -58,7 +60,10 @@ export default function SignInPage() {
           type="password"
           className="w-full p-3 border rounded"
         />
-        <button disabled={loading} className="w-full p-3 bg-red-700 text-white rounded">
+        <button
+          disabled={loading}
+          className="w-full p-3 bg-red-700 text-white rounded"
+        >
           {loading ? "Signing in…" : "Sign In"}
         </button>
       </form>
