@@ -44,7 +44,7 @@ export default function SignInPage() {
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{
         backgroundImage:
-          "url('https://i.pinimg.com/originals/0a/6a/7f/0a6a7fd4b423e2df73f57cf266b84a46.jpg')", // subtle old paper texture
+          "url('https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsb2ZmaWNlMjBfYV9wYXBlcl90ZXh0dXJlX29mX3NjcmliYmxlX3N0cm9rZV9zaW1wbGVfYW5kX181Mjg2OWM4YS02NGViLTQ2M2EtYmUzMC1hNDY2Zjc2Mjc5YTFfMS5qcGc.jpg')", // subtle old paper texture
       }}
     >
       <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-xl p-8 w-full max-w-md border border-yellow-200">
