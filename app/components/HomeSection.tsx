@@ -3,6 +3,7 @@ import Image from 'next/image';
 import BlogItem from './BlogItem';
 import { getAllBlogs } from '@/lib/helpers';
 import { BlogItemType } from '@/lib/types';
+import Link from 'next/link';
 
 const HomeSection = async () => {
   const blogs = await getAllBlogs();
@@ -70,12 +71,16 @@ const HomeSection = async () => {
 
         {/* CTA Button */}
         <div className="w-full text-center mt-10">
-          <button className="px-6 py-2 rounded-md font-medium
+          <Link
+                href={`/blogs`}
+                prefetch
+                className="px-6 py-2 rounded-md font-medium
                              border-2 border-red-700 bg-red-700 text-amber-50
                              hover:bg-red-800 hover:border-red-800 hover:scale-105
-                             transition-all duration-300 shadow-md">
-            Explore More Articles →
-          </button>
+                             transition-all duration-300 shadow-md"
+              >
+                Explore More Articles →
+              </Link>
         </div>
       </div>
     </section>

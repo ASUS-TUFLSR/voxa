@@ -37,44 +37,64 @@ const BlogList: React.FC<BlogListProps> = ({ blogs, categories }) => {
   return (
     <>
       {/* 🔹 Filter & Search Bar */}
-      <nav className="bg-red-100 border w-full flex flex-col sm:sticky top-0 z-50 gap-4 p-4 rounded-lg mt-6 shadow-sm">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full">
-          {/* Category Filter */}
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
-            <label htmlFor="category" className="font-semibold text-lg text-red-900">
-              Filter:
-            </label>
-            <select
-              id="category"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 rounded-md border border-red-300 bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all"
-            >
-              <option value="">All Categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <nav className="bg-white border border-red-200 shadow-md rounded-xl sticky top-0 z-50 w-full p-4 sm:p-6 mt-6">
+  <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+    {/* Filter Section */}
+    <div className="flex items-center gap-3 w-full md:w-auto">
+      <label
+        htmlFor="category"
+        className="font-semibold text-red-700 text-base whitespace-nowrap"
+      >
+        Category:
+      </label>
+      <select
+        id="category"
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+        className="px-4 py-2 rounded-lg border border-red-300 bg-red-50 text-red-900 
+                   hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400 
+                   transition-all duration-200"
+      >
+        <option value="">All</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+    </div>
 
-          {/* Search Input */}
-          <div className="flex flex-col w-full md:w-1/2">
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
-            <input
-              id="search"
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all"
-            />
-          </div>
-        </div>
-      </nav>
+    {/* Search Section */}
+    <div className="relative w-full md:w-1/2">
+      <input
+        id="search"
+        type="text"
+        placeholder="Search articles..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full px-5 py-2.5 pl-10 rounded-lg border border-gray-300 
+                   bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-400 
+                   focus:border-transparent text-gray-800 placeholder-gray-500
+                   shadow-sm transition-all duration-200"
+      />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-4.35-4.35M9.5 17A7.5 7.5 0 109.5 2a7.5 7.5 0 000 15z"
+        />
+      </svg>
+    </div>
+  </div>
+</nav>
+
 
       {/* 🔹 Blog Grid */}
       <section className="flex flex-col justify-center items-center py-8">
