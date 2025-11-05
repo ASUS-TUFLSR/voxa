@@ -69,21 +69,21 @@ export default function RegisterPage() {
             placeholder="Full Name"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-red-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <input
             type="email"
             placeholder="Email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-red-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <input
             type="password"
             placeholder="Password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="border border-red-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
           />
 
           {error && (

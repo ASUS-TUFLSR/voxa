@@ -52,7 +52,7 @@ export default function ProfilePage() {
   if (loading || fetching)
     return (
       <div className="flex justify-center items-center h-screen">
-        <p>Loading profile...</p>
+       
       </div>
     );
 
