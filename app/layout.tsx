@@ -2,12 +2,10 @@ import './globals.css'
 import Provider from "./components/Provider";
 import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";
-import { registerLicense } from '@syncfusion/ej2-base'
 import RouteLoader from "./components/RouteLoader";
 import { AuthProvider } from "@/lib/hooks/useAuth";
 
 
-registerLicense(process.env.NEXT_PUBLIC_SYNCFUSION_KEY || '');
 
 export const metadata = {
      title: "Voxa",
