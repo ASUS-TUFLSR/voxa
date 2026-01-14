@@ -53,7 +53,7 @@ const handleDelete = async () => {
         bg-repeat bg-amber-50 overflow-hidden"
     >
       {/* Decorative overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-red-200/10 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-tr from-red-200/10 to-transparent pointer-events-none" />
 
       {/* Blog Cover Image */}
       <CardHeader className="p-0">
@@ -90,7 +90,6 @@ const handleDelete = async () => {
           </p>
         </CardContent>
 
-        {/* Action Buttons */}
         <CardFooter className="px-5 pb-5 flex gap-2 justify-end">
           <Link
             href={`/blogs/view/${props.id}`}

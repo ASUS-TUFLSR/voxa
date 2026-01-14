@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
@@ -14,42 +15,76 @@ const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [blogs, setBlogs] = useState<BlogItemType[]>([]);
+  const [categoriesMap, setCategoriesMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  
 
   // ✅ Fetch blogs from backend API
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const res = await fetch("/api/blogs", { cache: "no-store" });
-        const data = await res.json();
-        setBlogs(data?.data?.blogs || []);
-      } catch (error) {
-        console.error("Failed to fetch blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlogs();
-  }, []);
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const [blogsRes, categoriesRes] = await Promise.all([
+        fetch("/api/blogs", { cache: "no-store" }),
+        fetch("/api/categories", { cache: "no-store" }),
+      ]);
+
+      const blogsData = await blogsRes.json();
+      const categoriesData = await categoriesRes.json();
+
+      const blogs = blogsData?.data?.blogs || [];
+      const categories = categoriesData?.data?.categories || [];
+
+      // 🔥 Build ID → Name map
+      const map: Record<string, string> = {};
+      categories.forEach((cat: any) => {
+        map[cat.id] = cat.name;
+      });
+
+      setBlogs(blogs);
+      setCategoriesMap(map);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   // ✅ Extract unique categories efficiently
-  const categories = useMemo(
-    () => Array.from(new Set(blogs.map((b) => b.categoryId || "Uncategorized"))),
-    [blogs]
+  // TODO category Id should not be displayed rather it's name
+  const categories = useMemo(() => {
+  const uniqueIds = new Set(blogs.map((b) => b.categoryId).filter(Boolean));
+  return Array.from(uniqueIds).map(
+    (id) => categoriesMap[id] || "Uncategorized"
   );
+}, [blogs, categoriesMap]);
+
+
+    // const categories = await getAllCategories();
+  
+
+  console.log(categories)
 
   // ✅ Filter blogs based on search + category
-  const filteredBlogs = useMemo(() => {
-    return blogs.filter((blog) => {
-      const matchesCategory = selectedCategory
-        ? blog.categoryId === selectedCategory
-        : true;
-      const matchesSearch =
-        blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        blog.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [blogs, searchQuery, selectedCategory]);
+ const filteredBlogs = useMemo(() => {
+  return blogs.filter((blog) => {
+    const categoryName = categoriesMap[blog.categoryId] || "Uncategorized";
+
+    const matchesCategory = selectedCategory
+      ? categoryName === selectedCategory
+      : true;
+
+    const matchesSearch =
+      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      blog.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+}, [blogs, searchQuery, selectedCategory, categoriesMap]);
+
 
   // ✅ UI
   return (
