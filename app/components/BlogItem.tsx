@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 type Props = BlogItemType & {
   isProfile?: boolean;
+  categoryName?: string;
 };
 
 const BlogItem = (props: Props) => {
