@@ -70,15 +70,18 @@ export default function ProfilePage() {
       <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
 
       {/* Profile Card */}
-      <div className="relative z-10 mt-12 bg-white/60 shadow-xl rounded-2xl px-10 py-8 max-w-2xl text-center border border-red-200">
+      <div className="relative z-10 mt-12 bg-transparent shadow-xl rounded-2xl px-10 py-8 max-w-2xl text-center border-4 border-red-200">
         <div className="flex flex-col items-center">
           <Image
-            className="rounded-full border-4 border-red-300 shadow-lg object-cover"
-            src={userData.data.profileUrl || "/userIcon.png"}
-            alt="User-Profile"
-            width={120}
-            height={120}
-          />
+  className={`rounded-full border-4 border-red-300 shadow-lg object-cover ${
+    !userData.data.profileUrl ? "invert" : ""
+  }`}
+  src={userData.data.profileUrl || "/userIcon.png"}
+  alt="User-Profile"
+  width={120}
+  height={120}
+/>
+
           <h1 className="mt-4 text-3xl font-bold text-red-800 font-serif">
             {userData.data.name}
           </h1>
